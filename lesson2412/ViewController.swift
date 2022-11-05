@@ -12,10 +12,10 @@ class ViewController: UIViewController {
     private var backGroundColor = UIColor.systemCyan
     
     private var products: [Informative] =
-    [Phone(model: "IPhone"),
-    Car(mark: "KIA"),
-    Shoes(brand: "ECCO"),
-    Phone(model: "Samsung")]
+    [Phone(IMEI: "234235", color: "Black night", model: "IPhone 13"),
+     Car(VIN: "124543", model: "Picanto", mark: "KIA"),
+     Shoes(type: "Snikers", size: 43, brand: "ECCO"),
+     Phone(IMEI: "76543", color: "White milk", model: "Samsung Galaxy")]
     
     private lazy var productsCollectionView: UICollectionView = {
         let collectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -39,15 +39,22 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupProducts()
   
         navigationItem.rightBarButtonItem = settingsBarButton
+        
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(changeColor), name: NSNotification.Name("setColor"), object: nil)
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        viewDidDisappear(animated)
-        
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//
+//        productsCollectionView.reloadData()
+//    }
+    
+    @objc func changeColor() {
         productsCollectionView.reloadData()
     }
     
@@ -76,6 +83,7 @@ extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "product_cell", for: indexPath) as! ProductCell
         cell.getLabel().text = products[indexPath.row].getTitle()
+        cell.getInfoLabel().text = products[indexPath.row].getInfo()
         cell.setColor()
         return cell
     }

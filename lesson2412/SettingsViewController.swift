@@ -10,8 +10,11 @@ import UIKit
 class SettingsViewController: UIViewController {
     
     private lazy var colors: [Informative] =
-    [BackgroundTheme.green,
-     BackgroundTheme.red]
+    [BackgroundTheme.red,
+     BackgroundTheme.green,
+     BackgroundTheme.yellow
+    ]
+
     
     private lazy var colorsTableView: UITableView = {
         let tableView = UITableView()
@@ -22,23 +25,43 @@ class SettingsViewController: UIViewController {
         return tableView
     }()
     
+    private lazy var previewColorView: UIView = {
+        let view = UITableView()
+        view.backgroundColor = cellColor
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .cyan
         
-        //delegate? = self
+        setupSubviews()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         
-        setupColors()
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.post(name: Notification.Name("setColor"), object: nil)
     }
    
-    func setupColors() {
+    func setupSubviews() {
+        
         view.addSubview(colorsTableView)
         colorsTableView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.left.equalToSuperview()
             make.right.equalToSuperview()
             make.bottom.equalToSuperview()
+        }
+        
+        view.addSubview(previewColorView)
+        previewColorView.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-50)
+            make.bottom.equalToSuperview().offset(-50)
+            make.width.equalTo(150)
+            make.height.equalTo(50)
         }
     }
 }
@@ -57,6 +80,17 @@ extension SettingsViewController: UITableViewDataSource {
 
 extension SettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        cellColor = UIColor.red
+        switch colors[indexPath.row].getTitle() {
+        case "Red":
+            cellColor = UIColor.red
+        case "Green":
+            cellColor = UIColor.green
+        case "Yellow":
+            cellColor = UIColor.yellow
+        default:
+            ()
+        }
+        
+        previewColorView.backgroundColor = cellColor
     }
 }
